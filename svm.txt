@@ -1,0 +1,22 @@
+1. Intuition
+1.1 Einordnung - Supervised learning, Algorithmen vergleichen
+1.1 Hyperplane, lineare Seperierbarkeit
+3. Kernel
+3.1 Mapping Funktionen
+3.2 Kernel "Trick"
+3.2.1 Gaussian RBF
+3.2.2 Sigmoid
+3.2.3 Polynomial
+3.2.4 Vergleich 
+- https://stats.stackexchange.com/questions/73032/linear-kernel-and-non-linear-kernel-for-support-vector-machine
+- http://mlkernels.readthedocs.io/en/latest/kernels.html
+- https://www.youtube.com/watch?v=WpODWJBzK2w
+- https://www.datasciencecentral.com/profiles/blogs/machine-learning-in-parallel-with-support-vector-machines
+- http://mcminis1.github.io/blog/2014/05/10/intuition-for-SVR/
+- https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf
+
+beispiele:
+-beer.csv von steinbuss
+-seraj https://www.youtube.com/watch?v=g8D5YL6cOSE&index=2&list=PL2-dafEMk2A7mu0bSksCGMJEmeddU_H4D
+- nicht linear seperierbar (v:/steinbuss/dm_master_ws1213/vorlesung.txt)
+
