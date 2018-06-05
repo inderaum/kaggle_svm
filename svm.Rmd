@@ -1,20 +1,59 @@
 ---
 title: "Support Vector Machines"
 author: "Michael In der Au"
-date: "4 Juni 2018"
+date: "8 Juni 2018"
 output:
+  word_document:
+    toc: yes
+    toc_depth: '2'
   pdf_document:
     toc: yes
     toc_depth: '2'
   html_document:
-    collapse: no
+    collapse: yes
     number-sections: yes
     toc: yes
     toc_depth: 2
-    toc_float: yes
 ---
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+set.seed(4711)
+library(tidyverse)
+library(ggplot2)
+library(e1071)
+library(kernlab)
+library(ISLR)
+library(ggplot2)
+library(dplyr)
+```
+
 # Intuition
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Support Vector Machines (SVM) stellen Algorithmen des überwachten Lernens (supervised
+learning) dar, mit denen es möglich ist sowohl Regressions- als auch
+Klassifikationsprobleme zu behandeln.
+Typischerweise werden allerdings Klassifikationsprobleme mittels SVM bearbeitet.
+
+```{r}
+x <- matrix(rnorm(20*2), ncol = 2)
+y <- c(rep(-1,10), rep(1,10))
+x[y==1,] <- x[y==1,] + 3/2
+dat <- data.frame(x=x, y=as.factor(y))
+
+ggplot(data = dat, aes(x = x.2, y = x.1, color = y, shape = y)) + 
+  geom_point(size = 2) +
+  scale_color_manual(values=c("#000000", "#FF0000")) +
+  theme(legend.position = "none")
+
+# Fit Support Vector Machine model to data set
+svmfit <- svm(y~., data = dat, kernel = "linear", scale = FALSE)
+# Plot Results
+plot(svmfit, dat)
+
+# fit model and produce plot
+kernfit <- ksvm(x, y, type = "C-svc", kernel = 'vanilladot')
+plot(kernfit, data = x)
+```
+
+$$(x_1,y_1),(x_2,y_2)...(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und \ y_i \in\ {\pm 1\}$$
 
 ## Einordnung - Supervised learning, Algorithmen vergleichen
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
@@ -42,3 +81,5 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 ### Vergleich 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+#Literatur

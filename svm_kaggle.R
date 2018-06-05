@@ -1,8 +1,6 @@
 #required packages
 install.packages('e1071')
 library(e1071)
-install.packages('ElemStatLearn')
-library(ElemStatLearn)
 install.packages("mice")
 library(mice)
 install.packages("caret")
@@ -80,8 +78,13 @@ summary(train$NumberOfTime30_59DaysPastDueNotWorse)
 summary(train$NumberOfTime60_89DaysPastDueNotWorse)
 summary(train$NumberOfTimes90DaysLate)
 
-nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==96))
-nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==98))
+nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse >=15))
+n_96 <- nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==96))
+n_98 <- nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==98))
+
+(n_96+n_98)/nrow(train)*100
+
+train_tmp <- train[train$NumberOfTime30_59DaysPastDueNotWorse >= 15]
 
 #- DebtRatio
 #-- (total debts) / (monthly income)
