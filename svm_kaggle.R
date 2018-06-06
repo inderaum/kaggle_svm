@@ -203,6 +203,12 @@ set.seed(123)
 library(kernlab)
 
 y <- train[,1]
+
+v_mod <- ksvm(x = as.factor(y),
+              data = train,
+              kernel = "polydot",
+              kpar = list("degree" = 2),
+              prob.model = TRUE)
 #svm classifier using e1071
 library(e1071)
 classifier <- svm(formula = SeriousDlqin2yrs ~ ., 
