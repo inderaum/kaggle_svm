@@ -3,10 +3,12 @@ title: "Support Vector Machines"
 author: "Michael In der Au"
 date: "8 Juni 2018"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '2'
   pdf_document:
+    latex_engine: xelatex
+    toc: yes
+    toc_depth: 2
+    number_sections: true
+  word_document:
     toc: yes
     toc_depth: '2'
   html_document:
@@ -25,12 +27,31 @@ library(ISLR)
 library(ggplot2)
 library(dplyr)
 ```
+\newpage
+#Grundlagen
+##Voraussetzungen
 
 # Intuition
 Support Vector Machines (SVM) stellen Algorithmen des überwachten Lernens (supervised
 learning) dar, mit denen es möglich ist sowohl Regressions- als auch
 Klassifikationsprobleme zu behandeln.
-Typischerweise werden allerdings Klassifikationsprobleme mittels SVM bearbeitet.
+Typischerweise werden allerdings Klassifikationsprobleme mittels SVM bearbeitet.[^1]
+Im Falle einer Klassifikation kann jeder Datenpunkt im n-dimensionalen Raum durch ein
+Tupel dargestellt werden. Somit ergeben sich sich N Tupel von Trainingsdaten zu:
+$$(x_1,y_1),(x_2,y_2)...(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und\ y_i \in \{\pm 1\}$$
+Hierbei stellt die erste Komponente,  $x_i$ die Eingangsdaten und die zweite
+Komponente,  $y_i$, die Klassen, in die unterschieden werden sollen dar.
+
+Die Trennung der Klassen erfolgt nun durch eine Hyperebene. Hierzu wird eine
+Funktion gesucht, durch die die Trainingsmenge korrekt klassifiziert wird.
+
+$$f: \mathbb{R}^n \to \{\pm1\}\ somit\ f(x_i) = y_i$$
+## Lineare Separierbarkeit
+
+
+image: ![](img/SVM_1.png)
+
+[^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
 
 ```{r}
 x <- matrix(rnorm(20*2), ncol = 2)
@@ -52,8 +73,6 @@ plot(svmfit, dat)
 kernfit <- ksvm(x, y, type = "C-svc", kernel = 'vanilladot')
 plot(kernfit, data = x)
 ```
-
-$$(x_1,y_1),(x_2,y_2)...(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und \ y_i \in\ {\pm 1\}$$
 
 ## Einordnung - Supervised learning, Algorithmen vergleichen
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
