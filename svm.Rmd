@@ -12,12 +12,12 @@ output:
     toc: yes
     toc_depth: '2'
   html_document:
-    collapse: yes
-    number-sections: yes
     toc: yes
     toc_depth: 2
+    number_sections: true
 ---
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
+options(tinytex.verbose = TRUE)
 set.seed(4711)
 library(tidyverse)
 library(ggplot2)
@@ -26,6 +26,8 @@ library(kernlab)
 library(ISLR)
 library(ggplot2)
 library(dplyr)
+library(knitr)
+library(png)
 ```
 \newpage
 # Einleitung
@@ -49,22 +51,22 @@ Neue Tupel werden somit durch folgende Funktion einer Klasse zugeordnet.
 
 $$f(x_k)=y_k$$
 
-## Lineare Trennung
+# Grundlagen
 
 Im simpelsten Anwendungsfall der SVM ist es möglich, die Daten linear zu seperieren.
 Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch zwei
-Einflussgrößen beschrieben sind.
+Einflussgrößen beschrieben sind. In diesem einfachen Fall existieren bereits viele
+Möglichkeiten, die Klassen zu trennen. Grafisch zeigt sich, dass neben einer
+horizontalen und vertikalen Trennung diverse diagonale Trennungen erfolgen können.
+Einige mögliche Hyperebenen sind im folgenden dargestellt.
 
-![mögliche Trennung der Klassen](img/svm1.png)
+<!-- ![mögliche\ Trennungen\ der\ Klassen](img/svm2.png) -->
+```{r, echo=FALSE}
+knitr::include_graphics("img/svm2.png")
+```
 
-In diesem einfachen Fall existieren bereits viele Möglichkeiten, die Klassen zu
-trennen. Grafisch zeigt sich, dass neben einer horizontalen und vertikalen Trennung
-diverse diagonale Trennungen erfolgen können. Einige vorstellbare Hyperebenen sind im
-folgenden dargestellt.
 
-![mögliche trennende Hyperebenen](img/svm2.png)
-
-Durch Abbildung 2 wird das Problem deutlich, welche lineare Trennung die optimale
+Durch Abbildung 1 wird das Problem deutlich, welche lineare Trennung die optimale
 ist. Deshalb gilt es nun aus diesen Möglichkeiten jene auszuwählen, welche den
 breitesten Rand (margin) aufweist. Aus dieser Voraussetzung ergibt sich die
 Bezeichnung der SVM als "large margin clssifier".
@@ -76,36 +78,67 @@ Um den größten Abstand der Klassen zueinander zu ermitteln werden nur jene Vekto
 aus den Klassen betrachtet, die am nächsten zueinander liegen.
 Die  Bezeichnung als Vektoren bezieht sich darauf, dass die Tupel in diesem
 zwei-dimensionlen Beispiel zwar als Punkte dargestellt werden können, bei
-mehr als drei Dimensionen sind diese allerdings mehrdimensionale Vektoren. 
+mehr als drei Dimensionen sind diese allerdings mehrdimensionale Vektoren.
 
-![Stützvektoren](img/svm4.png)
-```{r, out.width='70%'}
-knitr::include_graphics('img/svm4.png')
+<!-- ![Stützvektoren](img/svm3.png) -->
+```{r, echo=FALSE}
+knitr::include_graphics("img/svm3.png")
 ```
 
 
-Durch Abbildung 4 zeigt sich, dass zur Bestimmung der trennenden Hyperebene in
-diesem Fall nur die Stützvektoren einen Einfluss nehmen. Die zentrale Gerade
-zwischen den Stützvektoren wird als "seperating hyperplane" bezeichnet und stellt
-die Hyperebene zur optimalen Trennung der Klassen dar.
+
+Durch die Abbildung zeigt sich, dass zur Bestimmung der trennenden
+Hyperebene in diesem Fall nur die Stützvektoren einen Einfluss nehmen. Die zentrale
+Gerade zwischen den Stützvektoren wird als "seperating hyperplane" bezeichnet und
+stellt die Hyperebene zur optimalen Trennung der Klassen dar.
+
+\newpage
 
 # SVM Algorithmus
 
 Zur Bestimmung der Hyperebene bzw. der Stützvektoren wird der im Folgenden
 dargestellt Algorithmus verwendet.
 
-1. Definition der trennenden Hyperebene:  $\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$
-+ mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonal Vektor
-+ und $b\in\mathbb{R}$ als Verschiebung
-2. Da dies noch keine eindeutige Definition der Hyperebene ist, denn $$\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$$, muss diese noch normiert werden.
-+ Die Normierung erfolgt durch                                                       $\underset{i=1,\dots,N}{\min}\mid\langle aw,x\rangle +ab=1\mid$
-3. Der Abstand eines Punktes $x_i$ zu einer Hyperebene lässt sich nun berechnen zu: $$y_i*(\langle \frac{w}{\|w\|},x_i\rangle+\frac{b}{\|w\|}$$
-+ $\|w\|$ ist die Länge (Norm) des Vektors
-5. Als Ergebnis ergibt sich durch Umformungen $$\langle \frac{w}{\||w\||},(x_1-x_2)\rangle=\frac{2}{\||w\||}$$
-6. Um eine tatsächliche Trennung der Trainingsdaten durch die Hyperebene erreicht wird, wird die folgende Nebenbedingung eingeführt $$y_i*(\langle w,x_i\rangle+b\ge1$$
+Definition der trennenden Hyperebene:  
+$$\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$$
+mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonal Vektor
+und $b\in\mathbb{R}$ als Verschiebung
 
+Dies ist noch keine eindeutige Definition der Hyperebene, denn
+$$\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$$
 
-[^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
+Diese muss noch normiert werden, durch
+$$\underset{i=1,\dots,N}{\min}\mid\langle aw,x\rangle +ab=1\mid$$
+
+Der Abstand eines Punktes $x_i$ zu einer Hyperebene lässt sich nun berechnen zu
+$$y_i(\langle \frac{w}{\|w\|},x_i\rangle+\frac{b}{\|w\|})$$
+mit $\|w\|$ als Länge (Norm) des Vektors
+
+Als Ergebnis ergibt sich durch Umformungen 
+$$\langle \frac{w}{\|w\|},(x_1-x_2)\rangle=\frac{2}{\|w\|}$$
+
+Um eine tatsächliche Trennung der Trainingsdaten durch die Hyperebene zu erreichen,
+wird die folgende Nebenbedingung eingeführt
+$$y_i(\langle w,x_i\rangle+b\ge1\ \forall i=1,\dots,N$$
+
+Somit entsteht ein Problem der quadratischen Programmierung, bei dem
+Lagrange-Multiplikatoren $\alpha_i\ge0$ eingeführt.
+Die Lagrange-Funktion wird für $w\ und\ b$ minimiert und für $\alpha_i$ maximiert.
+$$L(w,b,\alpha)=\frac{1}{2}\|w\|^2-\sum_{i=1}^N\alpha_i(y_i(\langle w,x_i\rangle+b)-1)$$
+
+Werden die partiellen Ableitungen von $L$ nach $w$ und $b$ gleich $0$ gesetzt erhält
+man:
+$$\sum_{i=1}^N\alpha_iy_i=0\ und\ \sum_{i=1}^N\alpha_iy_ix_i$$
+
+Für das Optimum gilt nun entweder
+$$a_i=0\ oder\ y_i(\langle x_i,w\rangle)+b=1$$
+
+Somit haben nur die Punkte mit $\alpha_i \geq0$ einen Einfluss auf die optimale
+Lösung. Diese Punkte werden als "support vectors" bzw. "Stützvektoren" bezeichnet.
+
+Durch das Vorzeichen der Funktion kann nun über die Zuordnung zu einer Klasse entschieden werden.
+$$f(x_{neu}=sgn(\sum_{i=1}^N)\alpha_iy_i\langle x,x_i\rangle+b)$$
+
 
 ## Besonderheiten der SVM
 
@@ -118,21 +151,58 @@ Eigenschaft unterscheidet eine SVM von vielen anderen Klassifikationsalgorithmen
 
 # Nichtlineare Klassifikation
 
+## Grundlagen
 Da in der Realität nicht alle Klassifikationsprobleme von Grund auf linear
 seperierbar sind, können diese Fälle durch die Verwendung des Kern-Tricks dennoch
 linear seperierbar gemacht werden.
+Betrachtet wird in Abbildung 3 der Fall, dass die vorliegenden Daten im
+Ursprungssraum nicht linear seperierbar sind. Um diesen Fall nun dennoch durch eine
+Hyperebene linear seperieren zu können werden der Vektorraum und die Trainingsdaten
+durch eine Funktion $\Phi$ in einen höherdimensionalen Raum überführt. Wird die
+Hyperebene anschließend in den Ursprungsraum wird die Hyperebene nichtlinear.
 
-## Grundlagen
- 
-image: ![](img/svm5.png)
-```{r}
-#TODO Abbildung NR.
+<!-- ![Kernel\ Trick](img/svm4.png) -->
+```{r, echo=FALSE}
+knitr::include_graphics("img/svm4.png")
 ```
 
-Betrachtet wird in Abbildung XX der Fall, dass die vorliegenden Daten im Ursprungssraum nicht linear seperierbar sind 
+
+Durch eine Kernel-Funktion, die im Ursprungsraum definiert ist, ist es möglich, die
+diese im featur space wie ein Skalarprodukt zu behandeln.
+$$K(p,q)=\langle\Phi(p),\Phi(q)\rangle$$
+
+Das Skalarprodukt kann hierbei berechnet werden ohne die Funktion $\Phi$ zu
+berechnen. Das Vorgehen des Kernel-Tricks könnte als Blackbox angesehen werden, da der feature space und die Abbildung in diesen nicht bekannt sein muss.
+Übliche Kernel sind z.B.:
+
+Linearer Kernel
+$$K(p,q)=\langle p,q\rangle$$
+
+Polynomialer Kernel
+$$K(p,q)=(\gamma\langle p,q\rangle+c_0)^d$$
+
+Radiale Basisfunktion (Gauss Kernel)
+$$K(p,q)=exp(-\gamma\|p-q\|)^2$$
 
 # Anwendungsbeispiele
 
+Der SVM Algorithmus findet in diversen Bereichen Anwendung, z.B. in bei der Erkennung von Fingerabdrücken[^2] oder Erkennung von Emotionen einer Testperson anhand des Pulses und des Alters.[^3] Außerdem werden SVM häufig für die Klassifikation von Handschrift verwendet.[^4]
+Neben diesen Beispielen findet sich in der Praxis auch der Anwendungsfall, Schäden an Rotorblättern von Windkraftanlagen zu klassifizieren.[^6]
 
 
-# Literatur
+\newpage
+
+# Quellen
+
+* T. Hastie, R. Tibshirani, J. Friedman. The elements of statistical learning
+* F. Markowetz - Classification by SVM
+* J. Fischer - Support Vector Machines (SVM)
+* Schölkopf - Statistical Learning an Kernel Methods
+* S. Raval- Support Vector Machines
+
+[^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
+[^2]: http://www.iaescore.com/journals/index.php/IJEECS/article/view/10018
+[^3]: https://github.com/akasantony/pulse-classification-svm
+[^4]: https://github.com/ksopyla/svm_mnist_digit_classification
+[^5]: https://ieeexplore.ieee.org/abstract/document/1030883/
+[^6]: http://www.futureblades.com/

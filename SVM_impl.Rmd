@@ -224,7 +224,7 @@ test <- test[-1]
 ```
 
 # Modellierung
-```{r, warning=FALSE}
+```{r, eval=FALSE}
 #Modelling
 #seed for reproducibility
 set.seed(123)
@@ -239,3 +239,9 @@ classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ .,
 
 pred_rbf <- predict(classifier_rbf, newdata = train[-1])
 ```
+
+## Prediction
+```{r}
+classifier_rbf.predict
+```
+
