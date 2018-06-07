@@ -224,7 +224,7 @@ test <- test[-1]
 ```
 
 # Modellierung
-```{r, eval = FALSE}
+```{r, warning=FALSE}
 #Modelling
 #seed for reproducibility
 set.seed(123)
