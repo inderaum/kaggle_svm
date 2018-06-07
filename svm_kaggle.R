@@ -12,21 +12,6 @@ library(dplyr)
 install.packages("Hmisc")
 library(Hmisc)
 
-# ++++++++++++++++++++++++++++
-# flattenCorrMatrix
-# ++++++++++++++++++++++++++++
-# cormat : matrix of the correlation coefficients
-# pmat : matrix of the correlation p-values
-flattenCorrMatrix <- function(cormat, pmat) {
-  ut <- upper.tri(cormat)
-  data.frame(
-    row = rownames(cormat)[row(cormat)[ut]],
-    column = rownames(cormat)[col(cormat)[ut]],
-    cor  =(cormat)[ut],
-    p = pmat[ut]
-  )
-}
-
 #read train data
 train <- read.csv("data/cs-training.csv", header = T, sep = ",", dec = ".")
 #exclude ids
@@ -198,33 +183,22 @@ test <- test[-1]
 #seed for reproducibility
 set.seed(123)
 
-#svm classifier using kernlab
-
-library(kernlab)
-
-y <- train[,1]
-
-v_mod <- ksvm(x = as.factor(y),
-              data = train,
-              kernel = "polydot",
-              kpar = list("degree" = 2),
-              prob.model = TRUE)
 #svm classifier using e1071
 library(e1071)
-classifier <- svm(formula = SeriousDlqin2yrs ~ ., 
-                  data = train, 
-                  type = "C-classification", 
-                  kernel = "linear")
+# classifier <- svm(formula = SeriousDlqin2yrs ~ ., 
+#                   data = train, 
+#                   type = "C-classification", 
+#                   kernel = "linear")
 
 classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ ., 
                   data = train, 
                   type = "C-classification", 
                   kernel = "radial")
 
-pred_lin <- predict(classifier, newdata = test[-1])
+# pred_lin <- predict(classifier, newdata = test[-1])
 pred_rbf <- predict(classifier_rbf, newdata = train[-1])
 
-cm_lin = table(train[1], pred_lin[2])
+cm_lin = table(train[1], pred_rbf[2])
 
 
 #svm classifier using caret
