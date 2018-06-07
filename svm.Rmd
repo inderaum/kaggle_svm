@@ -94,11 +94,12 @@ die Hyperebene zur optimalen Trennung der Klassen dar.
 Zur Bestimmung der Hyperebene bzw. der Stützvektoren wird der im Folgenden
 dargestellt Algorithmus verwendet.
 
-1. Definition der trennenden Hyperebene $\mathcal{H}:=\{x\in\mathbb{R}^n\mid<w,x>+b=0\}$
-
+1. Definition der trennenden Hyperebene:  $\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$
 + mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonal Vektor
 + und $b\in\mathbb{R}$ als Verschiebung
-2. Da dies noch keine eindeutige Definition der Hyperebene ist, denn $$, muss diese noch normiert werden
+2. Da dies noch keine eindeutige Definition der Hyperebene ist, denn $\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$, muss diese noch normiert werden.
++ Die Normierung erfolgt durch                                                       $\underset{i=1,\dots,N}{\min}\mid\langle aw,x\rangle +ab=1\mid$
+3. Der Abstand eines Punktes $x_i$ zu einer Hyperebene lässt sich nun berechnen zu: $$y_i*(\langle \frac{w}{\|w\|},x_i\rangle+\frac{b}{\|w\|}$$
 
 
 [^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
