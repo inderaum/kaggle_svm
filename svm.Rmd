@@ -97,9 +97,12 @@ dargestellt Algorithmus verwendet.
 1. Definition der trennenden Hyperebene:  $\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$
 + mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonal Vektor
 + und $b\in\mathbb{R}$ als Verschiebung
-2. Da dies noch keine eindeutige Definition der Hyperebene ist, denn $\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$, muss diese noch normiert werden.
+2. Da dies noch keine eindeutige Definition der Hyperebene ist, denn $$\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$$, muss diese noch normiert werden.
 + Die Normierung erfolgt durch                                                       $\underset{i=1,\dots,N}{\min}\mid\langle aw,x\rangle +ab=1\mid$
 3. Der Abstand eines Punktes $x_i$ zu einer Hyperebene lässt sich nun berechnen zu: $$y_i*(\langle \frac{w}{\|w\|},x_i\rangle+\frac{b}{\|w\|}$$
++ $\|w\|$ ist die Länge (Norm) des Vektors
+5. Als Ergebnis ergibt sich durch Umformungen $$\langle \frac{w}{\||w\||},(x_1-x_2)\rangle=\frac{2}{\||w\||}$$
+6. Um eine tatsächliche Trennung der Trainingsdaten durch die Hyperebene erreicht wird, wird die folgende Nebenbedingung eingeführt $$y_i*(\langle w,x_i\rangle+b\ge1$$
 
 
 [^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
@@ -120,8 +123,16 @@ seperierbar sind, können diese Fälle durch die Verwendung des Kern-Tricks dennoc
 linear seperierbar gemacht werden.
 
 ## Grundlagen
+ 
+image: ![](img/svm5.png)
+```{r}
+#TODO Abbildung NR.
+```
 
-Ziel ist es, weiterhin eine 
+Betrachtet wird in Abbildung XX der Fall, dass die vorliegenden Daten im Ursprungssraum nicht linear seperierbar sind 
+
+# Anwendungsbeispiele
+
 
 
 # Literatur
