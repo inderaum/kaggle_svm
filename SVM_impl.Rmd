@@ -2,10 +2,17 @@
 title: "Support Vector Machine"
 author: "Michael In der Au"
 date: "6 Juni 2018"
-output: pdf_document
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    toc: yes
+    toc_depth: 2
+    number_sections: true
 ---
 
-```{r setup, include=FALSE}
+# Vorbereitung
+## Benötigte Pakete
+```{r, warnings = FALSE}
 #required packages
 library(e1071)
 library(mice)
@@ -13,31 +20,55 @@ library(caret)
 library(ggplot2)
 library(dplyr)
 library(Hmisc)
+```
 
-# ++++++++++++++++++++++++++++
-# flattenCorrMatrix
-# ++++++++++++++++++++++++++++
-# cormat : matrix of the correlation coefficients
-# pmat : matrix of the correlation p-values
-flattenCorrMatrix <- function(cormat, pmat) {
-  ut <- upper.tri(cormat)
-  data.frame(
-    row = rownames(cormat)[row(cormat)[ut]],
-    column = rownames(cormat)[col(cormat)[ut]],
-    cor  =(cormat)[ut],
-    p = pmat[ut]
-  )
-}
-#read previously inputed data
+# Einlesen der Ausgangsdaten
+```{r}
+#read train data
+train <- read.csv("data/cs-training.csv", header = T, sep = ",", dec = ".")
+#exclude ids
+train <- train[-c(1)]
+#read test data
+test <- read.csv("data/cs-test.csv", header = T, sep = ",", dec = ".")
+#exclude ids
+test <- test[-c(1)]
+
+#view data
+summary(train)
+summary(test)
+```
+
+# Preprocessing
+
+## Imputation der NAs 
+```{r, eval = FALSE}
+#imputation using MICE package
+imp <- mice(train, m=5, maxit=2, method='pmm', seed = 123)
+train_imputed <- complete(x = imp,action =  1)
+#summary(train_imputed)
+imp <- mice(test, m=5, maxit=2, method='pmm', seed = 123)
+test_imputed <- complete(x = imp,action =  1)
+
+#export imputed data as .csv for future usage
+write.csv(test_imputed,"data/test_imputed.csv")
+write.csv(train_imputed,"data/train_imputed.csv")
+```
+
+## Kontrolle der imputierten Daten
+```{r}
+#read imputed data
 train <- read.csv("data/train_imputed.csv")
 test <- read.csv("data/test_imputed.csv")
 
-#view imputed data
+#imputed data
 summary(train)
 summary(test)
+```
 
-#Preprocessing
+## Datenbereinigung
 
+### RevolvingUtilizationOfUnsecuredLines
+```{r}
 #-RevolvingUtilizationOfUnsecuredLines
 #-- (total balance) / (total credit limit)
 
@@ -54,7 +85,10 @@ nrow(mis)/nrow(train)*100
 train$RevolvingUtilizationOfUnsecuredLines[train$RevolvingUtilizationOfUnsecuredLines > 1] <- -1
 
 summary(train$RevolvingUtilizationOfUnsecuredLines)
+```
 
+### Age
+```{r}
 #-age
 
 summary(train$age)
@@ -64,8 +98,11 @@ nrow(mis)
 
 #omit line with age = 0
 train <- subset(train, age > 0)
+```
 
-#-NumberOfTimeXX_XXDaysPastDueNotWorse
+### NumberOfTime30_59DaysPastDueNotWorse
+```{r}
+#-NumberOfTime30_59DaysPastDueNotWorse
 
 summary(train$NumberOfTime30_59DaysPastDueNotWorse)
 summary(train$NumberOfTime60_89DaysPastDueNotWorse)
@@ -83,7 +120,10 @@ n_98 <- nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==98))
 train$NumberOfTime30_59DaysPastDueNotWorse[train$NumberOfTime30_59DaysPastDueNotWorse >= 15]<- -1
 
 summary(train$NumberOfTime30_59DaysPastDueNotWorse)
+```
 
+### NumberOfTime60_89DaysPastDueNotWorse, NumberOfTimes90DaysLate
+```{r}
 #the same approach applies to NumberOfTime60_89DaysPastDueNotWorse and
 #NumberOfTimes90DaysLate
 nrow(subset(train, train$NumberOfTime60_89DaysPastDueNotWorse >=15))
@@ -105,8 +145,11 @@ n_98 <- nrow(subset(train, train$NumberOfTimes90DaysLate ==98))
 
 train$NumberOfTimes90DaysLate[train$NumberOfTimes90DaysLate >= 19] <- -1
 
-summary(train$NumberOfTime60_89DaysPastDueNotWorse)
+summary(train$NumberOfTimes90DaysLate)
+```
 
+### Debt ratio
+```{r}
 #- DebtRatio
 #-- (total debts) / (monthly income)
 #-- thus, values > 1 indicate more debts than income
@@ -130,7 +173,10 @@ summary(train$MonthlyIncome)
 train$MonthlyIncome[is.na(train$MonthlyIncome)] <- 1
 
 summary(train$DebtRatio)
+```
 
+### Monthly income
+```{r}
 #-Monthly income
 
 summary(train$MonthlyIncome)
@@ -140,7 +186,10 @@ n_inc50k/nrow(train)*100
 
 #omit outliers
 train <- subset(train, MonthlyIncome < 50000)
+```
 
+### NumberOfOpenCreditLinesAndLoans
+```{r}
 #-NumberOfOpenCreditLinesAndLoans
 
 summary(train$NumberOfOpenCreditLinesAndLoans)
@@ -150,7 +199,10 @@ summary(train$NumberOfOpenCreditLinesAndLoans)
 nrow(train[train$NumberOfOpenCreditLinesAndLoans < quantile(train$NumberOfOpenCreditLinesAndLoans, 0.99),])
 train <- train[train$NumberOfOpenCreditLinesAndLoans < quantile(train$NumberOfOpenCreditLinesAndLoans, 0.99),]
 summary(train$NumberOfOpenCreditLinesAndLoans)
+```
 
+### NumberOfDependents
+```{r}
 #-NumberOfDependents
 
 summary(train$NumberOfDependents)
@@ -160,34 +212,30 @@ summary(train$NumberOfDependents)
 nrow(train[train$NumberOfDependents < quantile(train$NumberOfDependents, 0.99),])
 train <- train[train$NumberOfDependents < quantile(train$NumberOfDependents, 0.99),]
 summary(train$NumberOfDependents)
+```
 
+## Abschluss
+```{r}
 summary(train)
-
 
 #remove ids
 train <- train[-1]
 test <- test[-1]
+```
 
-
-
-
+# Modellierung
+```{r, eval = FALSE}
 #Modelling
 #seed for reproducibility
 set.seed(123)
 
 #svm classifier using e1071
 library(e1071)
-# classifier <- svm(formula = SeriousDlqin2yrs ~ ., 
-#                   data = train, 
-#                   type = "C-classification", 
-#                   kernel = "linear")
 
 classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ ., 
                   data = train, 
                   type = "C-classification", 
                   kernel = "radial")
 
-# pred_lin <- predict(classifier, newdata = test[-1])
 pred_rbf <- predict(classifier_rbf, newdata = train[-1])
 ```
-
