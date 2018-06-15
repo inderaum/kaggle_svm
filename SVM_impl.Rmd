@@ -8,6 +8,13 @@ output:
     toc: yes
     toc_depth: 2
     number_sections: true
+  word_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: true
 ---
 
 # Vorbereitung
@@ -224,8 +231,9 @@ test <- test[-1]
 ```
 
 # Modellierung
-```{r, warning=FALSE}
-#Modelling
+
+## Paket e1071
+```{r, eval=FALSE}
 #seed for reproducibility
 set.seed(123)
 
@@ -236,6 +244,44 @@ classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ .,
                   data = train, 
                   type = "C-classification", 
                   kernel = "radial")
+```
 
-pred_rbf <- predict(classifier_rbf, newdata = train[-1])
+## Paket kernlab
+```{r}
+#using kernlab 
+library(kernlab)
+
+mod <- ksvm(train$SeriousDlqin2yrs~.,
+            data = train,
+            kernel = "rbfdot",
+            prob.model = TRUE)
+#model overview
+mod
+#number of support vectors
+mod@nSV
+#line number of support vectors in the trainset
+mod@alphaindex
+#alpha values
+mod@alpha
+#hyperplane coefficiants
+# mod@coef
+#negative intercept
+mod@b
+#error on of the seperating hyperplane on the trainset
+mod@error
+#prediction
+u <- predict(mod, train)
+#confusion matrix
+# table(u,t(tmp[1]))
+#z scores
+# mod@xmatrix
+#scaled values
+mod@scaling$scaled
+#coefficiants
+mod@coef[[1]][1]
+mod@coef[[1]][2]
+#prediction on the test set
+pred.test <- predict(mod, test, type = "response")
+summary(pred.test<0)
+
 ```
