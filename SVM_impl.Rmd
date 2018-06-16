@@ -3,15 +3,15 @@ title: "Support Vector Machine"
 author: "Michael In der Au"
 date: "6 Juni 2018"
 output: 
-  pdf_document:
-    latex_engine: xelatex
+  html_document:
     toc: yes
     toc_depth: 2
     number_sections: true
   word_document:
     toc: yes
     toc_depth: '2'
-  html_document:
+  pdf_document:
+    latex_engine: xelatex
     toc: yes
     toc_depth: 2
     number_sections: true
@@ -19,7 +19,7 @@ output:
 
 # Vorbereitung
 ## Benötigte Pakete
-```{r, warnings = FALSE}
+```{r, warnings = FALSE, warning=FALSE, error=FALSE}
 #required packages
 library(e1071)
 library(mice)
@@ -48,17 +48,17 @@ summary(test)
 # Preprocessing
 
 ## Imputation der NAs 
-```{r, eval = FALSE}
-#imputation using MICE package
-imp <- mice(train, m=5, maxit=2, method='pmm', seed = 123)
-train_imputed <- complete(x = imp,action =  1)
-#summary(train_imputed)
-imp <- mice(test, m=5, maxit=2, method='pmm', seed = 123)
-test_imputed <- complete(x = imp,action =  1)
-
-#export imputed data as .csv for future usage
-write.csv(test_imputed,"data/test_imputed.csv")
-write.csv(train_imputed,"data/train_imputed.csv")
+```{r, eval = FALSE, warning=FALSE, error=FALSE}
+# #imputation using MICE package
+# imp <- mice(train, m=5, maxit=2, method='pmm', seed = 123)
+# train_imputed <- complete(x = imp,action =  1)
+# #summary(train_imputed)
+# imp <- mice(test, m=5, maxit=2, method='pmm', seed = 123)
+# test_imputed <- complete(x = imp,action =  1)
+# 
+# #export imputed data as .csv for future usage
+# write.csv(test_imputed,"data/test_imputed.csv")
+# write.csv(train_imputed,"data/train_imputed.csv")
 ```
 
 ## Kontrolle der imputierten Daten
@@ -75,7 +75,7 @@ summary(test)
 ## Datenbereinigung
 
 ### RevolvingUtilizationOfUnsecuredLines
-```{r}
+```{r, warning=FALSE, error=FALSE}
 #-RevolvingUtilizationOfUnsecuredLines
 #-- (total balance) / (total credit limit)
 
@@ -105,6 +105,8 @@ nrow(mis)
 
 #omit line with age = 0
 train <- subset(train, age > 0)
+
+summary(train$age)  
 ```
 
 ### NumberOfTime30_59DaysPastDueNotWorse
@@ -117,7 +119,7 @@ summary(train$NumberOfTimes90DaysLate)
 
 #it can be assumed that 96 and 98 are coded values of some kind, 
 #because both values have their own meaning they cant be ommited
-# and have to be encoded in some kind
+# and have to be encoded
 nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse >=15))
 n_96 <- nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==96))
 n_98 <- nrow(subset(train, train$NumberOfTime30_59DaysPastDueNotWorse ==98))
@@ -247,7 +249,7 @@ classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ .,
 ```
 
 ## Paket kernlab
-```{r}
+```{r, warning=FALSE, error=FALSE}
 #using kernlab 
 library(kernlab)
 
