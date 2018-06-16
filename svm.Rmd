@@ -30,56 +30,71 @@ library(png)
 ```
 \newpage
 # Einleitung
-Support Vector Machines (SVM) stellen Algorithmen des überwachten Lernens
-(supervised learning) dar, mit denen es möglich ist sowohl Regressions- als auch
+Support Vector Machines (SVM) stellen Algorithmen des überwachten
+Lernens
+(supervised learning) dar, mit denen es möglich ist sowohl Regressions-
+als auch
 Klassifikationsprobleme zu behandeln.
-Typischerweise werden allerdings Klassifikationsprobleme mittels SVM bearbeitet.[^1]
+Typischerweise werden allerdings Klassifikationsprobleme mittels SVM
+bearbeitet.[^1]
 
-Im Falle einer Klassifikation kann jeder Datenpunkt im n-dimensionalen Raum durch
-ein Tupel dargestellt werden. Somit ergeben sich sich N Tupel von Trainingsdaten zu:
+Im Falle einer Klassifikation kann jeder Datenpunkt im n-dimensionalen
+Raum durch
+ein Tupel dargestellt werden. Somit ergeben sich sich N Tupel von
+Trainingsdaten zu:
 $$(x_1,y_1),(x_2,y_2)\dots(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und\ y_i \in \{\pm 1\}$$
-Hierbei stellt die erste Komponente,  $x_i$ die Eingangsdaten und die zweite
-Komponente,  $y_i$, die Klassen, in die unterschieden werden sollen dar.
+Hierbei stellt die erste Komponente,  $x_i$ die Eingangsdaten und die
+zweite
+Komponente,  $y_i$, die Klassen, in die unterschieden werden sollen
+dar.
 
-Die Trennung der Klassen erfolgt nun durch eine Hyperebene. Hierzu wird eine
-Funktion gesucht, durch die die Trainingsmenge korrekt klassifiziert wird.
+Die Trennung der Klassen erfolgt nun durch eine Hyperebene. Hierzu wird
+eine
+Funktion gesucht, durch die die Trainingsmenge korrekt klassifiziert
+wird.
 
 $$f: \mathbb{R}^n \to \{\pm1\}\ sodass\ f(x_i) = y_i$$
 
-Neue Tupel werden somit durch folgende Funktion einer Klasse zugeordnet.
+Neue Tupel werden somit durch folgende Funktion einer Klasse
+zugeordnet.
 
 $$f(x_k)=y_k$$
 
 # Grundlagen
 
-Im simpelsten Anwendungsfall der SVM ist es möglich, die Daten linear zu seperieren.
-Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch zwei
-Einflussgrößen beschrieben sind. In diesem einfachen Fall existieren bereits viele
-Möglichkeiten, die Klassen zu trennen. Grafisch zeigt sich, dass neben einer
-horizontalen und vertikalen Trennung diverse diagonale Trennungen erfolgen können.
+Im simpelsten Anwendungsfall der SVM ist es möglich, die Daten linear
+zu seperieren.
+Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch
+zwei
+Einflussgrößen beschrieben sind. In diesem einfachen Fall existieren
+bereits viele
+Möglichkeiten, die Klassen zu trennen. Grafisch zeigt sich, dass neben
+einer
+horizontalen und vertikalen Trennung diverse diagonale Trennungen
+erfolgen können.
 Einige mögliche Hyperebenen sind im folgenden dargestellt.
 
-<!-- ![mögliche\ Trennungen\ der\ Klassen](img/svm2.png) -->
 ```{r, echo=FALSE}
 knitr::include_graphics("img/svm2.png")
 ```
 
 
-Durch Abbildung 1 wird das Problem deutlich, welche lineare Trennung die optimale
-ist. Deshalb gilt es nun aus diesen Möglichkeiten jene auszuwählen, welche den
-breitesten Rand (margin) aufweist. Aus dieser Voraussetzung ergibt sich die
-Bezeichnung der SVM als "large margin clssifier".
-In diesem Fall wäre dies die Variante unten rechts in Abbildung 2. Neue Punkte
-können somit mit einer maximalen Wahrscheinlichkeit der korrekten Klasse zugeordnet
-werden.
+Durch Abbildung 1 wird das Problem deutlich, welche lineare Trennung
+die optimale
+ist. Deshalb gilt es nun aus diesen Möglichkeiten jene auszuwählen,
+welche den breitesten Rand (margin) aufweist. Aus dieser Voraussetzung
+ergibt sich die Bezeichnung der SVM als "large margin clssifier".
+In diesem Fall wäre dies die Variante unten rechts in Abbildung 2. Neue
+Punkte können somit mit einer maximalen Wahrscheinlichkeit der
+korrekten Klasse zugeordnet werden.
 
-Um den größten Abstand der Klassen zueinander zu ermitteln werden nur jene Vektoren
-aus den Klassen betrachtet, die am nächsten zueinander liegen.
-Die  Bezeichnung als Vektoren bezieht sich darauf, dass die Tupel in diesem
-zwei-dimensionlen Beispiel zwar als Punkte dargestellt werden können, bei
-mehr als drei Dimensionen sind diese allerdings mehrdimensionale Vektoren.
+Um den größten Abstand der Klassen zueinander zu ermitteln werden nur
+jene Vektoren aus den Klassen betrachtet, die am nächsten zueinander
+liegen. Die  Bezeichnung als Vektoren bezieht sich darauf, dass die
+Tupel in diesem zwei-dimensionlen Beispiel zwar als Punkte dargestellt
+werden können, bei mehr als drei Dimensionen sind diese allerdings
+mehrdimensionale Vektoren.
 
-<!-- ![Stützvektoren](img/svm3.png) -->
 ```{r, echo=FALSE}
 knitr::include_graphics("img/svm3.png")
 ```
@@ -87,16 +102,17 @@ knitr::include_graphics("img/svm3.png")
 
 
 Durch die Abbildung zeigt sich, dass zur Bestimmung der trennenden
-Hyperebene in diesem Fall nur die Stützvektoren einen Einfluss nehmen. Die zentrale
-Gerade zwischen den Stützvektoren wird als "seperating hyperplane" bezeichnet und
-stellt die Hyperebene zur optimalen Trennung der Klassen dar.
+Hyperebene in diesem Fall nur die Stützvektoren einen Einfluss nehmen.
+Die zentrale Gerade zwischen den Stützvektoren wird als "seperating
+hyperplane" bezeichnet und stellt die Hyperebene zur optimalen Trennung
+der Klassen dar.
 
 \newpage
 
 # SVM Algorithmus
 
-Zur Bestimmung der Hyperebene bzw. der Stützvektoren wird der im Folgenden
-dargestellt Algorithmus verwendet.
+Zur Bestimmung der Hyperebene bzw. der Stützvektoren wird der im
+Folgenden dargestellt Algorithmus verwendet.
 
 Definition der trennenden Hyperebene:  
 $$\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$$
