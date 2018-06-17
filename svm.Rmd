@@ -1,7 +1,7 @@
 ---
 title: "Support Vector Machines"
 author: "Michael In der Au"
-date: "8 Juni 2018"
+date: "22 Juni 2018"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -30,12 +30,13 @@ library(png)
 ```
 \newpage
 # Einleitung
-Support Vector Machines (SVM) stellen Algorithmen des überwachten
-Lernens
-(supervised learning) dar, mit denen es möglich ist sowohl Regressions-
-als auch
+Support Vector Machines (SVM) stellen
+Algorithmen des überwachten Lernens
+(supervised learning) dar, mit denen es
+möglich ist sowohl Regressions- als auch
 Klassifikationsprobleme zu behandeln.
-Typischerweise werden allerdings Klassifikationsprobleme mittels SVM
+Typischerweise werden allerdings
+Klassifikationsprobleme mittels SVM
 bearbeitet.[^1]
 
 Im Falle einer Klassifikation kann jeder Datenpunkt im n-dimensionalen
@@ -60,13 +61,16 @@ zugeordnet.
 
 $$f(x_k)=y_k$$
 
-# Grundlagen
+# Lineare Trennung
 
 Im simpelsten Anwendungsfall der SVM ist es möglich, die Daten linear
 zu seperieren.
 Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch
 zwei
-Einflussgrößen beschrieben sind. In diesem einfachen Fall existieren
+Einflussgrößen beschrieben sind betrachtet.
+
+## Hyperebenen
+In diesem einfachen Fall existieren
 bereits viele
 Möglichkeiten, die Klassen zu trennen. Grafisch zeigt sich, dass neben
 einer
@@ -74,7 +78,7 @@ horizontalen und vertikalen Trennung diverse diagonale Trennungen
 erfolgen können.
 Einige mögliche Hyperebenen sind im folgenden dargestellt.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap="potentielle Hyperebenen"}
 knitr::include_graphics("img/svm2.png")
 ```
 
@@ -90,12 +94,12 @@ korrekten Klasse zugeordnet werden.
 
 Um den größten Abstand der Klassen zueinander zu ermitteln werden nur
 jene Vektoren aus den Klassen betrachtet, die am nächsten zueinander
-liegen. Die  Bezeichnung als Vektoren bezieht sich darauf, dass die
+liegen. Die  Bezeichnung "Vektoren"" bezieht sich darauf, dass die
 Tupel in diesem zwei-dimensionlen Beispiel zwar als Punkte dargestellt
-werden können, bei mehr als drei Dimensionen sind diese allerdings
-mehrdimensionale Vektoren.
+werden können, bei mehr als drei Dimensionen allerdings
+mehrdimensionale Vektoren sind.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap="Margin der Hyperebene"}
 knitr::include_graphics("img/svm3.png")
 ```
 
@@ -199,21 +203,36 @@ $$K(p,q)=(\gamma\langle p,q\rangle+c_0)^d$$
 Radiale Basisfunktion (Gauss Kernel)
 $$K(p,q)=exp(-\gamma\|p-q\|)^2$$
 
+# Vorteile 
+* Da die benötigten Parameter auf wenigen Support Vektoren basieren, ist eine Klassifikation durch eine SVM  sehr schnell möglich.
+* 
+
+# Nachteile
+
 # Anwendungsbeispiele
 
-Der SVM Algorithmus findet in diversen Bereichen Anwendung, z.B. in bei der Erkennung von Fingerabdrücken[^2] oder Erkennung von Emotionen einer Testperson anhand des Pulses und des Alters.[^3] Außerdem werden SVM häufig für die Klassifikation von Handschrift verwendet.[^4]
-Neben diesen Beispielen findet sich in der Praxis auch der Anwendungsfall, Schäden an Rotorblättern von Windkraftanlagen zu klassifizieren.[^6]
+Der SVM Algorithmus findet in diversen Bereichen Anwendung, z.B. in bei
+der Erkennung von Fingerabdrücken[^2] oder Erkennung von Emotionen
+einer Testperson anhand des Pulses und des Alters.[^3] Außerdem werden
+SVM häufig für die Klassifikation von Handschrift verwendet.[^4]
+Neben diesen Beispielen findet sich in der Praxis auch der
+Anwendungsfall, Schäden an Rotorblättern von Windkraftanlagen zu
+klassifizieren.[^6]
+
+
 
 
 \newpage
 
 # Quellen
 
+
+* J. Fischer - Support Vector Machines (SVM)
 * T. Hastie, R. Tibshirani, J. Friedman. The elements of statistical learning
 * F. Markowetz - Classification by SVM
-* J. Fischer - Support Vector Machines (SVM)
 * Schölkopf - Statistical Learning an Kernel Methods
-* S. Raval- Support Vector Machines
+* S. Raval - Support Vector Machines
+* W. Steinbuß - Skript Ueberleitung_NN_SVM
 
 [^1]: https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png
 [^2]: http://www.iaescore.com/journals/index.php/IJEECS/article/view/10018
