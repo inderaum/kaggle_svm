@@ -3,15 +3,15 @@ title: "Support Vector Machine"
 author: "Michael In der Au"
 date: "6 Juni 2018"
 output: 
-  html_document:
+  pdf_document:
+    latex_engine: xelatex
     toc: yes
     toc_depth: 2
     number_sections: true
   word_document:
     toc: yes
     toc_depth: '2'
-  pdf_document:
-    latex_engine: xelatex
+  html_document:
     toc: yes
     toc_depth: 2
     number_sections: true
@@ -249,7 +249,7 @@ classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ .,
 ```
 
 ## Paket kernlab
-```{r, warning=FALSE, error=FALSE}
+```{r, eval=FALSE}
 #using kernlab 
 library(kernlab)
 
@@ -257,24 +257,29 @@ mod <- ksvm(train$SeriousDlqin2yrs~.,
             data = train,
             kernel = "rbfdot",
             prob.model = TRUE)
+```
+
+```{r, warning=FALSE, error=FALSE}
+
 #model overview
-mod
+head(mod)
 #number of support vectors
 mod@nSV
 #line number of support vectors in the trainset
-mod@alphaindex
+head(mod@alphaindex)
 #alpha values
-mod@alpha
+head(mod@alpha)
 #hyperplane coefficiants
-# mod@coef
+head(mod@coef)
 #negative intercept
 mod@b
 #error on of the seperating hyperplane on the trainset
 mod@error
 #prediction
 u <- predict(mod, train)
+head(u)
 #confusion matrix
-# table(u,t(tmp[1]))
+table(u,t(train[1]))
 #z scores
 # mod@xmatrix
 #scaled values
