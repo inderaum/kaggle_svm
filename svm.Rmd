@@ -3,15 +3,15 @@ title: "Support Vector Machines"
 author: "Michael In der Au"
 date: "22 Juni 2018"
 output:
-  pdf_document:
-    latex_engine: xelatex
-    toc: yes
-    toc_depth: 2
-    number_sections: true
   word_document:
     toc: yes
     toc_depth: '2'
   html_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: true
+  pdf_document:
+    latex_engine: xelatex
     toc: yes
     toc_depth: 2
     number_sections: true
@@ -43,18 +43,16 @@ Im Falle einer Klassifikation kann jeder Datenpunkt im n-dimensionalen
 Raum durch
 ein Tupel dargestellt werden. Somit ergeben sich sich N Tupel von
 Trainingsdaten zu:
-$$(x_1,y_1),(x_2,y_2)\dots(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und\ y_i \in \{\pm 1\}$$
+$$T=(x_1,y_1),(x_2,y_2)\dots(x_N,y_N)\ mit\ x_i \in \mathbb{R}^n\ und\ y_i \in \{\pm 1\}$$
 Hierbei stellt die erste Komponente,  $x_i$ die Eingangsdaten und die
-zweite
-Komponente,  $y_i$, die Klassen, in die unterschieden werden sollen
+zweite Komponente,  $y_i$, die Klassen, in die unterschieden werden sollen
 dar.
 
 Die Trennung der Klassen erfolgt nun durch eine Hyperebene. Hierzu wird
-eine
-Funktion gesucht, durch die die Trainingsmenge korrekt klassifiziert
-wird.
+eine Funktion gesucht, durch die möglichst viele Elemente der Trainingsmenge korrekt klassifiziert werden.
 
-$$f: \mathbb{R}^n \to \{\pm1\}\ sodass\ f(x_i) = y_i$$
+$$f: \mathbb{R}^n \to \{\pm1\}\ $$
+$$\ f(x_i) = y_i$$
 
 Neue Tupel werden somit durch folgende Funktion einer Klasse
 zugeordnet.
@@ -64,18 +62,18 @@ $$f(x_k)=y_k$$
 # Lineare Trennung
 
 Im simpelsten Anwendungsfall der SVM ist es möglich, die Daten linear
-zu seperieren.
-Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch
-zwei
-Einflussgrößen beschrieben sind betrachtet.
+zu seperieren. Hierzu werden zwei beliebige Klassen von Daten betrachtet, die durch
+zwei Einflussgrößen beschrieben sind betrachtet. Durch die alleinige Betrachtung der grafischen Darstellung wird bereits deutlich, dass keine eindeutige Möglichkeit der trennung existiert.
+
+```{r, echo=FALSE, fig.cap="zwei Klassen von Daten"}
+knitr::include_graphics("img/svm1.png")
+```
+
 
 ## Hyperebenen
-In diesem einfachen Fall existieren
-bereits viele
-Möglichkeiten, die Klassen zu trennen. Grafisch zeigt sich, dass neben
-einer
-horizontalen und vertikalen Trennung diverse diagonale Trennungen
-erfolgen können.
+In diesem einfachen Fall existieren bereits viele Möglichkeiten, die Klassen zu trennen.
+Es zeigt sich, dass neben einer vertikalen Trennung diverse
+diagonale Trennungen erfolgen können.
 Einige mögliche Hyperebenen sind im folgenden dargestellt.
 
 ```{r, echo=FALSE, fig.cap="potentielle Hyperebenen"}
@@ -83,21 +81,19 @@ knitr::include_graphics("img/svm2.png")
 ```
 
 
-Durch Abbildung 1 wird das Problem deutlich, welche lineare Trennung
-die optimale
-ist. Deshalb gilt es nun aus diesen Möglichkeiten jene auszuwählen,
+Durch Abbildung 2 wird das Problem deutlich, welche lineare Trennung
+die optimale ist. Deshalb gilt es nun aus diesen Möglichkeiten jene auszuwählen,
 welche den breitesten Rand (margin) aufweist. Aus dieser Voraussetzung
 ergibt sich die Bezeichnung der SVM als "large margin clssifier".
 In diesem Fall wäre dies die Variante unten rechts in Abbildung 2. Neue
-Punkte können somit mit einer maximalen Wahrscheinlichkeit der
-korrekten Klasse zugeordnet werden.
+Punkte können somit mit einer maximalen Wahrscheinlichkeit der korrekten Klasse zugeordnet
+werden.
 
 Um den größten Abstand der Klassen zueinander zu ermitteln werden nur
 jene Vektoren aus den Klassen betrachtet, die am nächsten zueinander
 liegen. Die  Bezeichnung "Vektoren"" bezieht sich darauf, dass die
 Tupel in diesem zwei-dimensionlen Beispiel zwar als Punkte dargestellt
-werden können, bei mehr als drei Dimensionen allerdings
-mehrdimensionale Vektoren sind.
+werden können, bei mehr als drei Dimensionen allerdings mehrdimensionale Vektoren sind.
 
 ```{r, echo=FALSE, fig.cap="Margin der Hyperebene"}
 knitr::include_graphics("img/svm3.png")
@@ -105,39 +101,62 @@ knitr::include_graphics("img/svm3.png")
 
 
 
-Durch die Abbildung zeigt sich, dass zur Bestimmung der trennenden
-Hyperebene in diesem Fall nur die Stützvektoren einen Einfluss nehmen.
-Die zentrale Gerade zwischen den Stützvektoren wird als "seperating
-hyperplane" bezeichnet und stellt die Hyperebene zur optimalen Trennung
+Durch die Abbildung zeigt sich, dass zur Bestimmung der
+trennenden Hyperebene in diesem Fall nur die Stützvektoren
+einen Einfluss nehmen. Die Gerade zwischen den Stützvektoren
+wird als "seperating hyperplane" bezeichnet und stellt die
+Hyperebene zur optimalen Trennung
 der Klassen dar.
 
 \newpage
 
-# SVM Algorithmus
+## Algorithmus
 
 Zur Bestimmung der Hyperebene bzw. der Stützvektoren wird der im
-Folgenden dargestellt Algorithmus verwendet.
+Folgenden skizzierte Algorithmus verwendet.
 
 Definition der trennenden Hyperebene:  
 $$\mathcal{H}:=\{x\in\mathbb{R}^n\mid\langle w,x\rangle +b=0\}$$
-mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonal Vektor
-und $b\in\mathbb{R}$ als Verschiebung
+mit $w\in\mathbb{R}^n$ als zu $\mathcal{H}$ orthogonaler
+Vektor und $b\in\mathbb{R}$ als Verschiebung.
 
-Dies ist noch keine eindeutige Definition der Hyperebene, denn
+```{r, echo=FALSE, fig.cap="Trennung zweier Klassen durch eine Hyperebene"}
+knitr::include_graphics("img/svm5.png")
+```
+
+
+Dies ist allerdings noch keine eindeutige Definition der
+Hyperebene, denn
 $$\mathcal{H}=\{x\in\mathbb{R}^n\mid\langle aw,x\rangle +ab=0\}\ \forall a\in \mathbb{R}\backslash\{0\}$$
 
-Diese muss noch normiert werden, durch
-$$\underset{i=1,\dots,N}{\min}\mid\langle aw,x\rangle +ab=1\mid$$
+Zur Behebung dieses Problems muss noch relativ zu den
+Trainingsdaten normiert werden, durch:
+$$\underset{i=1,\dots,N}{\min}\mid\langle w,x\rangle +ab\mid=1$$
 
-Der Abstand eines Punktes $x_i$ zu einer Hyperebene lässt sich nun berechnen zu
+Wird diese Bedingung erfüllt, ergibt sich die kanonische
+Form der Hyperebene.
+
+Der Abstand eines Punktes $x_i$ zur
+Hyperebene lässt sich nun berechnen zu:
 $$y_i(\langle \frac{w}{\|w\|},x_i\rangle+\frac{b}{\|w\|})$$
-mit $\|w\|$ als Länge (Norm) des Vektors
+mit $\|w\|$ als Länge (Norm) des Vektors.
 
-Als Ergebnis ergibt sich durch Umformungen 
-$$\langle \frac{w}{\|w\|},(x_1-x_2)\rangle=\frac{2}{\|w\|}$$
+Durch die Skalierung gilt für $x_1$ und $x_2$:
+$$\langle w,x_1\rangle+b=+1\ und\ \langle w,x_2\rangle+b=-1$$
 
-Um eine tatsächliche Trennung der Trainingsdaten durch die Hyperebene zu erreichen,
-wird die folgende Nebenbedingung eingeführt
+Im nächsten Schritt kann nun der Rand (margin) bestimmt werden. Dieser beschreibt den Abstand der Hyperebene zu dem Punkt, der ihr am nächsten liegt. 
+```{r, echo= FALSE, fig.cap="Punkte $x_1$ und $x_2$"}
+knitr::include_graphics("img/svm6.png")
+```
+
+Als Ergebnis ergibt sich durch Umformungen:
+$$\langle w,x_1\rangle+b=+1\\\langle w,x_2\rangle+b=-1\\\Rightarrow\langle w,(x_1-x_2)\rangle=2\\\Rightarrow\langle \frac{w}{\|w\|},(x_1-x_2)\rangle=\frac{2}{\|w\|}$$
+
+Um den Rand nun zu maximieren, muss die Länge des Vektors $w$ minimiert werden.
+
+Um eine tatsächliche Trennung der Trainingsdaten durch die
+Hyperebene zu erreichen, wird die folgende Nebenbedingung
+eingeführt.
 $$y_i(\langle w,x_i\rangle+b\ge1\ \forall i=1,\dots,N$$
 
 Somit entsteht ein Problem der quadratischen Programmierung, bei dem
@@ -226,7 +245,7 @@ klassifizieren.[^6]
 
 # Quellen
 
-
+* Z. Chunhua, D. Naiyang, T. Yingjie - Support vector machines : optimization based theory, algorithms, and extensions
 * J. Fischer - Support Vector Machines (SVM)
 * T. Hastie, R. Tibshirani, J. Friedman. The elements of statistical learning
 * F. Markowetz - Classification by SVM
