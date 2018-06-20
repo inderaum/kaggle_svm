@@ -234,39 +234,68 @@ test <- test[-1]
 
 # Modellierung
 
+```{r}
+#seed for reproducibility
+set.seed(123)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+train <- head(train,5000)
+test <- head(test,5000)
+```
+
 ## Paket e1071
-```{r, eval=FALSE}
+
+```{r, eval=FALSE, warning=FALSE}
 #seed for reproducibility
 set.seed(123)
 
 #svm classifier using e1071
 library(e1071)
 
+
 classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ ., 
                   data = train, 
                   type = "C-classification", 
-                  kernel = "radial")
+                  kernel = "radial",
+                  probability = TRUE)
+
+#train set prediction
+pred_train <- predict(classifier_rbf, 
+                      newdata = train[-1], 
+                      decision.values = TRUE)
+
+(cm = table(train[,1], pred_train))
+
+#test set prediction
+pred_test <- predict(classifier_rbf, newdata = test[-1])
+
+mod.probs <- attr(pred_test, "decision.values")
+mod.class <- predict(classifier_rbf, test[-1], type = "class")
+mod.labels <- test$SeriousDlqin2yrs
+
+mod.cm <- confusionMatrix(mod.labels,mod.class)
+
 ```
 
 ## Paket kernlab
-```{r, echo=FALSE, warning=FALSE, error=FALSE}
-train <- head(train,250)
-```
 
-```{r, eval=FALSE}
-#using kernlab 
+```{r, warning = FALSE, eval=FALSE}
 library(kernlab)
 
-mod <- ksvm(train$SeriousDlqin2yrs~.,
+mod <- ksvm(as.factor(train$SeriousDlqin2yrs)~.,
             data = train,
             kernel = "rbfdot",
             prob.model = TRUE)
+
+
 ```
 
 ```{r, warning=FALSE, error=FALSE}
 
 #model overview
-head(mod)
+mod
 #number of support vectors
 mod@nSV
 #line number of support vectors in the trainset
@@ -279,11 +308,15 @@ head(mod@coef)
 mod@b
 #error on of the seperating hyperplane on the trainset
 mod@error
-#prediction
-u <- predict(mod, train)
-head(u)
+# prediction
+# u <- predict(mod, train[-1])
+
+pred <- predict(mod, newdata = train[-1])
+head(pred)
 #confusion matrix
-table(u,t(train[1]))
+
+(cm = table(train[,1], pred))
+
 #z scores
 # mod@xmatrix
 #scaled values
