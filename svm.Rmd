@@ -69,7 +69,7 @@ zwei Einflussgrößen beschrieben sind betrachtet. Durch die alleinige Betrachtung
 knitr::include_graphics("img/svm1.png")
 ```
 
-
+\newpage
 ## Hyperebenen
 In diesem einfachen Fall existieren bereits viele Möglichkeiten, die Klassen zu trennen.
 Es zeigt sich, dass neben einer vertikalen Trennung diverse
@@ -105,10 +105,8 @@ Durch die Abbildung zeigt sich, dass zur Bestimmung der
 trennenden Hyperebene in diesem Fall nur die Stützvektoren
 einen Einfluss nehmen. Die Gerade zwischen den Stützvektoren
 wird als "seperating hyperplane" bezeichnet und stellt die
-Hyperebene zur optimalen Trennung
-der Klassen dar.
+Hyperebene zur optimalen Trennung der Klassen dar.
 
-\newpage
 
 ## Algorithmus
 
@@ -155,27 +153,24 @@ $$\langle w,x_1\rangle+b=+1\\\langle w,x_2\rangle+b=-1\\\Rightarrow\langle w,(x_
 Um den Rand nun zu maximieren, muss die Länge des Vektors $w$ minimiert werden.
 
 Um eine tatsächliche Trennung der Trainingsdaten durch die
-Hyperebene zu erreichen, wird die folgende Nebenbedingung
-eingeführt.
-$$y_i(\langle w,x_i\rangle+b\ge1\ \forall i=1,\dots,N$$
+Hyperebene zu erreichen, wird der Term $\langle w,x\rangle+b$ mit der Klasse $y_i$ multipliziert, sodass das Ergebnis für richtig Klassifizierungen immer positiv ist. Hierdurch ergibt sich die folgende Nebenbedingung.
+$$y_i(\langle w,x_i\rangle+b)\ge1\ \forall i=1,\dots,N$$
 
 Somit entsteht ein Problem der quadratischen Programmierung, bei dem
 Lagrange-Multiplikatoren $\alpha_i\ge0$ eingeführt.
 Die Lagrange-Funktion wird für $w\ und\ b$ minimiert und für $\alpha_i$ maximiert.
 $$L(w,b,\alpha)=\frac{1}{2}\|w\|^2-\sum_{i=1}^N\alpha_i(y_i(\langle w,x_i\rangle+b)-1)$$
 
-Werden die partiellen Ableitungen von $L$ nach $w$ und $b$ gleich $0$ gesetzt erhält
-man:
-$$\sum_{i=1}^N\alpha_iy_i=0\ und\ \sum_{i=1}^N\alpha_iy_ix_i$$
+Werden die partiellen Ableitungen von $L$ nach $w$ und $b$ gleich $0$
+gesetzt erhält man:
+$$\sum_{i=1}^N\alpha_iy_i=0\ und\ w=\sum_{i=1}^N\alpha_iy_ix_i$$
 
-Für das Optimum gilt nun entweder
-$$a_i=0\ oder\ y_i(\langle x_i,w\rangle)+b=1$$
+Für das Optimum gilt nun: $$\alpha_i=0\ oder\ y_i(\langle x_i,w\rangle)+b=1$$
 
-Somit haben nur die Punkte mit $\alpha_i \geq0$ einen Einfluss auf die optimale
-Lösung. Diese Punkte werden als "support vectors" bzw. "Stützvektoren" bezeichnet.
+Somit haben nur die Punkte mit $\alpha_i \geq0$ einen Einfluss auf die optimale Lösung. Diese Punkte werden als "support vectors" bzw. "Stützvektoren" bezeichnet.
 
-Durch das Vorzeichen der Funktion kann nun über die Zuordnung zu einer Klasse entschieden werden.
-$$f(x_{neu}=sgn(\sum_{i=1}^N)\alpha_iy_i\langle x,x_i\rangle+b)$$
+Durch das Vorzeichen der Funktion kann nun über die Zuordnung zu einer Klasse entschieden werden. $$f(x_{neu})=sign(\sum_{i=1}^N\alpha_iy_i\langle x,x_i\rangle+b)$$
+
 
 
 ## Besonderheiten der SVM
@@ -189,28 +184,22 @@ Eigenschaft unterscheidet eine SVM von vielen anderen Klassifikationsalgorithmen
 
 # Nichtlineare Klassifikation
 
-## Grundlagen
 Da in der Realität nicht alle Klassifikationsprobleme von Grund auf linear
 seperierbar sind, können diese Fälle durch die Verwendung des Kern-Tricks dennoch
 linear seperierbar gemacht werden.
 Betrachtet wird in Abbildung 3 der Fall, dass die vorliegenden Daten im
 Ursprungssraum nicht linear seperierbar sind. Um diesen Fall nun dennoch durch eine
-Hyperebene linear seperieren zu können werden der Vektorraum und die Trainingsdaten
-durch eine Funktion $\Phi$ in einen höherdimensionalen Raum überführt. Wird die
-Hyperebene anschließend in den Ursprungsraum wird die Hyperebene nichtlinear.
+Hyperebene linear seperieren zu können werden der Vektorraum und die Trainingsdaten durch eine Funktion $\Phi$ in einen höherdimensionalen Raum überführt, in dem sie linear seperierbar sind. Bei der Rücktransformation in den Ursprungsraum entsteht eine nicht-lineare Trennung der Klassen.
 
-<!-- ![Kernel\ Trick](img/svm4.png) -->
-```{r, echo=FALSE}
-knitr::include_graphics("img/svm4.png")
-```
+![Kernel\ Trick](img/svm4.png)
 
+Das dargestellte Problem ist im Ursprungsraum nicht linear seperierbar, allerdings ist dies im Featureraum $H$ möglich. Die Transformation der Abbildung vom zwei- in den dreidimensionalen Raum kann folgendermaßen vorgenommen werden:
+$$\Phi(g_1,g_2)=(g_1^2,\sqrt{2}*g_1*g_2,g_2^2)$$
 
-Durch eine Kernel-Funktion, die im Ursprungsraum definiert ist, ist es möglich, die
-diese im featur space wie ein Skalarprodukt zu behandeln.
+Durch eine Kernel-Funktion, die im Ursprungsraum definiert ist, ist es möglich, diese im feature space wie ein Skalarprodukt zu behandeln.
 $$K(p,q)=\langle\Phi(p),\Phi(q)\rangle$$
 
-Das Skalarprodukt kann hierbei berechnet werden ohne die Funktion $\Phi$ zu
-berechnen. Das Vorgehen des Kernel-Tricks könnte als Blackbox angesehen werden, da der feature space und die Abbildung in diesen nicht bekannt sein muss.
+Das Skalarprodukt kann hierbei berechnet werden ohne die Funktion $\Phi$ zu berechnen. Das Vorgehen des Kernel-Tricks könnte als Blackbox angesehen werden, da der feature space und die Abbildung in diesen nicht bekannt sein muss.
 Übliche Kernel sind z.B.:
 
 Linearer Kernel
@@ -222,18 +211,25 @@ $$K(p,q)=(\gamma\langle p,q\rangle+c_0)^d$$
 Radiale Basisfunktion (Gauss Kernel)
 $$K(p,q)=exp(-\gamma\|p-q\|)^2$$
 
-# Vorteile 
-* Da die benötigten Parameter auf wenigen Support Vektoren basieren, ist eine Klassifikation durch eine SVM  sehr schnell möglich.
-* 
+# Vor- und Nachteile
 
-# Nachteile
+Abschließend werden Vor- und Nachteile der Klassifikation mittels SVM dargestellt.
+
+## Vorteile
+* Da die benötigten Parameter auf wenigen Support Vektoren basieren, ist eine Klassifikation durch eine SVM  sehr schnell möglich.
+* SVM bieten eine hohe Generalisierungsfähigkeit für z.B. nicht linear seperierbare Probleme.
+* Die Arbeit in hohen Dimensionen wird ermöglicht.
+
+## Nachteile
+* Für neue Daten muss jedes mal ein neues Training durchgeführt werden.
+* Die Wahl eines geeigneten Kernels gestaltet sich schwierig. Dieser muss empirisch gesucht werden.
 
 # Anwendungsbeispiele
 
 Der SVM Algorithmus findet in diversen Bereichen Anwendung, z.B. in bei
-der Erkennung von Fingerabdrücken[^2] oder Erkennung von Emotionen
+der Erkennung von Fingerabdrücken[^2] oder der Klassifikation von Emotionen
 einer Testperson anhand des Pulses und des Alters.[^3] Außerdem werden
-SVM häufig für die Klassifikation von Handschrift verwendet.[^4]
+SVM häufig für die Klassifikation von Handschrift verwendet.[^4][^5]
 Neben diesen Beispielen findet sich in der Praxis auch der
 Anwendungsfall, Schäden an Rotorblättern von Windkraftanlagen zu
 klassifizieren.[^6]
