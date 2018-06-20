@@ -249,6 +249,10 @@ classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ .,
 ```
 
 ## Paket kernlab
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+train <- head(train,250)
+```
+
 ```{r, eval=FALSE}
 #using kernlab 
 library(kernlab)
