@@ -1,25 +1,28 @@
 ---
 title: "Support Vector Machine"
 author: "Michael In der Au"
-date: "6 Juni 2018"
+date: "22.06.2018"
 output: 
+  word_document:
+    toc: yes
+    toc_depth: '2'
   pdf_document:
     latex_engine: xelatex
     toc: yes
     toc_depth: 2
     number_sections: true
-  word_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     toc: yes
     toc_depth: 2
     number_sections: true
 ---
-
+```{r, echo=FALSE}
+load("D:/dev/workspace_r/kaggle_svm/kaggle_svm/svm_kaggle_workspace.RData")
+```
+\newpage
 # Vorbereitung
 ## Benötigte Pakete
-```{r, warnings = FALSE, warning=FALSE, error=FALSE}
+```{r, warnings = FALSE, warning=FALSE, error=FALSE, message=FALSE}
 #required packages
 library(e1071)
 library(mice)
@@ -49,16 +52,16 @@ summary(test)
 
 ## Imputation der NAs 
 ```{r, eval = FALSE, warning=FALSE, error=FALSE}
-# #imputation using MICE package
-# imp <- mice(train, m=5, maxit=2, method='pmm', seed = 123)
-# train_imputed <- complete(x = imp,action =  1)
-# #summary(train_imputed)
-# imp <- mice(test, m=5, maxit=2, method='pmm', seed = 123)
-# test_imputed <- complete(x = imp,action =  1)
-# 
-# #export imputed data as .csv for future usage
-# write.csv(test_imputed,"data/test_imputed.csv")
-# write.csv(train_imputed,"data/train_imputed.csv")
+#imputation using MICE package
+imp <- mice(train, m=5, maxit=2, method='pmm', seed = 123)
+train_imputed <- complete(x = imp,action =  1)
+#summary(train_imputed)
+imp <- mice(test, m=5, maxit=2, method='pmm', seed = 123)
+test_imputed <- complete(x = imp,action =  1)
+
+#export imputed data as .csv for future usage
+write.csv(test_imputed,"data/test_imputed.csv")
+write.csv(train_imputed,"data/train_imputed.csv")
 ```
 
 ## Kontrolle der imputierten Daten
@@ -240,76 +243,77 @@ set.seed(123)
 ```
 
 
-```{r, echo=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+```{r, warning=FALSE, error=FALSE, eval=FALSE}
+#model subset
 train <- head(train,5000)
 test <- head(test,5000)
 ```
 
 ## Paket e1071
 
-```{r, eval=FALSE, warning=FALSE}
+```{r, warning=FALSE,message=FALSE}
 #seed for reproducibility
 set.seed(123)
 
 #svm classifier using e1071
 library(e1071)
+library(caret)
+```
 
-
+```{r, eval=FALSE}
 classifier_rbf <- svm(formula = SeriousDlqin2yrs ~ ., 
                   data = train, 
                   type = "C-classification", 
-                  kernel = "radial",
-                  probability = TRUE)
+                  kernel = "radial")
 
 #train set prediction
 pred_train <- predict(classifier_rbf, 
-                      newdata = train[-1], 
-                      decision.values = TRUE)
-
-(cm = table(train[,1], pred_train))
-
-#test set prediction
-pred_test <- predict(classifier_rbf, newdata = test[-1])
-
-mod.probs <- attr(pred_test, "decision.values")
-mod.class <- predict(classifier_rbf, test[-1], type = "class")
-mod.labels <- test$SeriousDlqin2yrs
-
-mod.cm <- confusionMatrix(mod.labels,mod.class)
-
+                      newdata = train[-1])
 ```
+
+```{r, eval=FALSE}
+(cm = table(train[,1], pred_train))
+```
+
+```{r, warning=FALSE}
+#test set prediction
+pred_test <- predict(classifier_rbf, 
+                     newdata = test[-1])
+
+summary(pred_test)
+```
+
 
 ## Paket kernlab
 
-```{r, warning = FALSE, eval=FALSE}
+```{r, warning = FALSE, error=FALSE, message=FALSE}
 library(kernlab)
+```
 
+```{r, eval=FALSE}
 mod <- ksvm(as.factor(train$SeriousDlqin2yrs)~.,
             data = train,
             kernel = "rbfdot",
             prob.model = TRUE)
-
-
 ```
 
 ```{r, warning=FALSE, error=FALSE}
-
 #model overview
 mod
 #number of support vectors
 mod@nSV
 #line number of support vectors in the trainset
-head(mod@alphaindex)
+# mod@alphaindex
 #alpha values
-head(mod@alpha)
+# mod@alpha
 #hyperplane coefficiants
-head(mod@coef)
+# mod@coef
 #negative intercept
 mod@b
-#error on of the seperating hyperplane on the trainset
+#error of the seperating hyperplane on the trainset
 mod@error
 # prediction
-# u <- predict(mod, train[-1])
+u <- predict(mod, train[-1])
 
 pred <- predict(mod, newdata = train[-1])
 head(pred)
@@ -326,6 +330,5 @@ mod@coef[[1]][1]
 mod@coef[[1]][2]
 #prediction on the test set
 pred.test <- predict(mod, test, type = "response")
-summary(pred.test<0)
-
+summary(pred.test)
 ```
